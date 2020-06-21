@@ -2,20 +2,20 @@ clear all
 clc
 close all
 %myFolder = 'C:\Users\Shixin Xu\Downloads\2018\July\7\ECMExport'; % Define your working folder
-number_Frames=1000
+number_Frames=167
 number_Basal_Nodes=1953 ; 
 number_Apical_Nodes=1838 ;
 number_BC_Nodes=416 ;
 
-notAvailStart=301 ; 
-notAvailEnd=426; 
+notAvailStart=151 ; 
+notAvailEnd=150; 
 
 time_ind=0 ; 
 for increment =1:number_Frames
     if  increment<notAvailStart || increment>notAvailEnd
         time_ind=time_ind+1 ; 
        
-        epi_nodes = load(['C:\Users\Shixin Xu\Downloads\2018\Dec\9\ECMLocationExport_N01G02_' num2str(increment) '.txt']); 
+        epi_nodes = load(['ECMLocationExport_N03G01_' num2str(increment) '.txt']); 
        XYBsaal(1:number_Basal_Nodes,1)=epi_nodes(1:number_Basal_Nodes,1) ; 
        XYBsaal(1:number_Basal_Nodes,2)=epi_nodes(1:number_Basal_Nodes,2) ; 
 
@@ -51,6 +51,7 @@ ExpCurv=0.006*ones (1,time_ind)
 % hold on
 % plot (Time22,meanCurvatureApical22) %%3
 
+
 plot (1:notAvailStart-1,meanCurvatureBasal22(1:notAvailStart-1))
 hold on 
 plot (notAvailEnd+1:number_Frames,meanCurvatureBasal22(notAvailStart:end))
@@ -71,17 +72,30 @@ plot (notAvailEnd+1:number_Frames,meanCurvatureBC22(notAvailStart:end))
 title(' BC curvature')
 
 
-fileID = fopen('ApicalCurvartue_Dec9_0203.txt','w');
-TimePrint=(1:notAvailStart-1) ;
-ApicalCurvePrint=meanCurvatureApical22(1:notAvailStart-1)
-TimePrint2=(notAvailEnd+1:number_Frames) ;
-ApicalCurvePrint2=meanCurvatureApical22(notAvailStart:end)
+fileID_apical = fopen('ApicalCurvartue_0202_June16th2020.txt','w');
+fileID_basal  = fopen('BasalCurvartue_0202_June16th2020.txt','w');
 
-A=[TimePrint ; ApicalCurvePrint] 
-A2=[TimePrint2 ; ApicalCurvePrint2] 
-fprintf(fileID,'%6.2f %12.8f\n',A) ;
-fprintf(fileID,'%6.2f %12.8f\n',A2) ; 
-fclose(fileID);
+time_part1=(1:notAvailStart-1) ;
+time_part2=(notAvailEnd+1:number_Frames) ;
+
+apical_curve_part1=meanCurvatureApical22(1:notAvailStart-1)
+apical_curve_part2=meanCurvatureApical22(notAvailStart:end)
+
+basal_curve_part1 =meanCurvatureBasal22(1:notAvailStart-1)
+basal_curve_part2 =meanCurvatureBasal22(notAvailStart:end)
+
+
+time_and_apical_curve_part1=[time_part1 ; apical_curve_part1] 
+time_and_apical_curve_part2=[time_part2 ; apical_curve_part2] 
+fprintf(fileID_apical,'%6.2f %12.8f\n',time_and_apical_curve_part1) ;
+fprintf(fileID_apical,'%6.2f %12.8f\n',time_and_apical_curve_part2) ; 
+fclose(fileID_apical);
+
+time_and_basal_curve_part1=[time_part1 ; basal_curve_part1] 
+time_and_basal_curve_part2=[time_part2 ; basal_curve_part2] 
+fprintf(fileID_basal,'%6.2f %12.8f\n',time_and_basal_curve_part1) ;
+fprintf(fileID_basal,'%6.2f %12.8f\n',time_and_basal_curve_part2) ; 
+fclose(fileID_basal);
 
 save('run22','meanCurvatureBasal22','meanCurvatureApical22','Time22'); %%4
 %plot(Time22,meanCurvatureBasal22, Time22,ExpCurv )
@@ -90,6 +104,5 @@ save('run22','meanCurvatureBasal22','meanCurvatureApical22','Time22'); %%4
 % hold on 
 %rectangle('Position', [0 0.004 1000 0.004], 'FaceColor', [1 0 0 0.5])
 
-
-
+double (meanCurvatureBasal22(end))
 
